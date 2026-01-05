@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpamFlix – Premium AI Spam Detection</title>
+    <!-- Lucide Icons for modern look -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --netflix-red: #e50914;
+            --netflix-black: #141414;
+            --netflix-dark-grey: #181818;
+            --netflix-light-grey: #b3b3b3;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--netflix-black);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER / NAVBAR --- */
+        header {
+            padding: 20px 5%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--netflix-red);
+            text-decoration: none;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        .logo span {
+            color: #ffffff;
+            font-weight: 300;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        nav a:hover {
+            color: var(--netflix-light-grey);
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px 60px;
+            background-image: radial-gradient(circle at center, rgba(229, 9, 20, 0.05) 0%, transparent 70%);
+        }
+
+        .hero-text {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero-text h2 {
+            font-size: clamp(32px, 5vw, 48px);
+            margin-bottom: 10px;
+        }
+
+        .hero-text p {
+            color: var(--netflix-light-grey);
+            font-size: 18px;
+        }
+
+        .detector-card {
+            background: var(--netflix-dark-grey);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-top: 4px solid var(--netflix-red);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 160px;
+            background: #333;
+            border: none;
+            border-bottom: 3px solid transparent;
+            border-radius: 4px;
+            padding: 15px;
+            color: white;
+            font-size: 16px;
+            resize: none;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        textarea:focus {
+            background: #444;
+            border-bottom-color: var(--netflix-red);
+        }
+
+        .btn-check {
+            width: 100%;
+            padding: 16px;
+            background: var(--netflix-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .btn-check:hover {
+            background: #f6121d;
+            transform: scale(1.02);
+        }
+
+        /* --- RESULTS --- */
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 4px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .SPAM {
+            background: rgba(229, 9, 20, 0.1);
+            border: 1px solid var(--netflix-red);
+        }
+
+        .NOTSPAM {
+            background: rgba(70, 211, 105, 0.1);
+            border: 1px solid #46d369;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .SPAM .result-header { color: #ff4d4d; }
+        .NOTSPAM .result-header { color: #46d369; }
+
+        .original-msg {
+            font-size: 14px;
+            color: var(--netflix-light-grey);
+            font-style: italic;
+            border-left: 2px solid #555;
+            padding-left: 10px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: rgba(0,0,0,0.9);
+            padding: 50px 5%;
+            color: var(--netflix-light-grey);
+            border-top: 8px solid #222;
+        }
+
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-section h4 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .footer-section ul li a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .footer-section ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 480px) {
+            .detector-card {
+                padding: 20px;
+            }
+            header {
+                padding: 15px 5%;
+            }
+            nav {
+                display: none; /* Keep it clean on small mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">SPAM<span>FLIX</span></a>
+        <nav>
+            <a href="#">FAQ</a>
+            <a href="#">Help Center</a>
+            <a href="#">Account</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero-text">
+            <h2>Unlimited spam detection.</h2>
+            <p>Scan any message and keep your inbox clean.</p>
+        </div>
+
+        <section class="detector-card">
+            <form action="/predict" method="post">
+                <div class="input-group">
+                    <textarea 
+                        name="message" 
+                        placeholder="Please Enter your Message" 
+                        required></textarea>
+                </div>
+                <button type="submit" class="btn-check">
+                    <i data-lucide="shield-check"></i>
+                    Check Status
+                </button>
+            </form>
+
+            <!-- Result Section (Handled by Flask/Jinja2) -->
+            {% if prediction_text %}
+            <div class="result {{ 'SPAM' if prediction_text == 'SPAM' else 'NOTSPAM' }}">
+                <div class="result-header">
+                    {% if prediction_text == 'SPAM' %}
+                    <i data-lucide="alert-triangle"></i>
+                    Spam Detected!
+                    {% else %}
+                    <i data-lucide="check-circle"></i>
+                    Message is Safe
+                    {% endif %}
+                </div>
+                <p class="original-msg">"{{ original_text }}"</p>
+            </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Questions? Call 000-800-919-1694</h4>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Cookie Preferences</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Corporate Information</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Social</h4>
+                <ul>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Github</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2024-2025 SpamFlix India. All rights reserved. Built with AI.
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Interactive textarea focus
+        const textarea = document.querySelector("textarea");
+        textarea.addEventListener("focus", () => {
+            document.querySelector(".detector-card").style.boxShadow = "0 0 40px rgba(229, 9, 20, 0.2)";
+        });
+
+        textarea.addEventListener("blur", () => {
+            document.querySelector(".detector-card").style.boxShadow = "0 10px 30px rgba(0,0,0,0.5)";
+        });
+    </script>
+</body>
+</html>
